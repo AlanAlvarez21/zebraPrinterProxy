@@ -4,11 +4,44 @@ from rest_framework.response import Response
 
 class PrintersAPIView(APIView):
     def post(self, request):
-        # Generar el código ZPL
-        zpl_code = """
+
+        lote = 'FE-C-311023124-12'
+        clave_producto = 'BOPP TRANS 35 /143'
+        peso_bruto = '12.01'
+        peso_neto = '11.5'
+        metros_lineales = '100'
+        cliente = 'don luis'
+        name = 'CACA'
+        longitudName = len(name)
+        longitudClave = len(clave_producto)
+
+        def setName():
+            if (longitudName > 13):
+                return 10
+            else:
+                return 100
+
+        # Generar el código ZPL utilizando un f-string
+        zpl_code = f"""
         ^XA
-        ^FO50,50^A0N,50,50^FDHola^FS
+        ^CI28
+        ^MMT
+        ^PW400
+        ^LL0500
+        ^LS0
+        ^FO{setName()},20^A0N,30,30^FD{name}^FS
+        ^FO10,60^A0N,35,35^FD     {clave_producto}^FS
+        ^FO10,100^A0N,30,30^FDPB: {peso_bruto}kg^FS
+        ^FO10,135^A0N,30,30^FDPN: {peso_neto}kg ^FS
+        ^FO10,165^A0N,30,30^FDML: {metros_lineales}m ^FS
+       
+        ^FO10,200^BY2,2
+        ^BCN,80,Y,N,N
+        ^FD{lote}^FS
+
+        ^PQ1,0,1,Y
         ^XZ
+
         """
 
         # Definir la URL de la API de Zebra y los encabezados
